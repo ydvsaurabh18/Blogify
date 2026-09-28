@@ -2,48 +2,119 @@
 <html lang="en">
 <head>
     <%- include('./partials/head') %>
-    <title>Blog</title>
+    <title><%= blog.title %> — Blogify</title>
 </head>
 <body>
     <%- include('./partials/nav') %>
 
-    <div class="container mt-4 ">
-         <h1><%= blog.title %></h1>
-         <img src="<%= blog.coverImageURL %>" width="400px"/>
-         <pre class="mt-3"><%= blog.body %></pre>
-    </div>
+    <main class="container my-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-9">
+          
+          <!-- Back Button -->
+          <a href="/" class="btn btn-outline-custom mb-4 px-3 py-2 text-decoration-none d-inline-flex align-items-center gap-2" style="font-size: 0.9rem;">
+            <i class="bi bi-arrow-left"></i> Back to Articles
+          </a>
 
-    <div class="container mt-4">
-       <img src="<%= blog.createdBy.profileImageURL  %>" width="50px"> <%= blog.createdBy.fullName %>
-    </div>
-    
-    
+          <!-- Article Header Card -->
+          <article class="p-4 p-md-5 mb-5" style="background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+            
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <span class="badge px-3 py-2" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 600; border-radius: 50px;">
+                <i class="bi bi-bookmark-fill me-1"></i> Article
+              </span>
+            </div>
 
-    <div class="container mt-3">
-        <h1>Comments (<%= comments.length  %>)</h1>
-        <% if (locals.user) { %>
-        <form action="/blog/comment/<%= blog._id %>" method="POST">
+            <h1 class="font-outfit fw-bold text-white mb-4 display-5" style="line-height: 1.25;"><%= blog.title %></h1>
 
-          <div class="mb-3">
-       
-           <input type="text"
-            name="content"
-             class="form-control" placeholder="Enter your comment" />
-             <button class="btn btn-sm btn-primary" type="submit">Add</button>
-         </div>  
-        </form>
-        
-        <% } %>
-        <div class="mt-3">
-            <% comments.forEach(comment => { %>
-             <div>
-                <img src="<%= comment.createdBy.profileImageURL  %>" width="50px">
-             </div>
-             <%= comment.createdBy.fullName %>
-              <pre> <%= comment.content %> </pre>
-            <% }) %>
+            <!-- Author info banner -->
+            <div class="d-flex align-items-center gap-3 p-3 mb-4 rounded-4" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.06);">
+              <div class="author-avatar-placeholder" style="width: 46px; height: 46px; font-size: 1.1rem;">
+                <%= (blog.createdBy && blog.createdBy.fullName) ? blog.createdBy.fullName.charAt(0).toUpperCase() : 'B' %>
+              </div>
+              <div>
+                <div class="fw-bold text-white fs-6">
+                  <%= (blog.createdBy && blog.createdBy.fullName) ? blog.createdBy.fullName : 'Blogify Author' %>
+                </div>
+                <div class="text-muted" style="font-size: 0.82rem;">
+                  Published on Blogify • Verified Creator
+                </div>
+              </div>
+            </div>
+
+            <!-- Cover Image -->
+            <% if (blog.coverImageURL) { %>
+              <% 
+                let coverUrl = blog.coverImageURL;
+                if (!coverUrl.startsWith('/') && !coverUrl.startsWith('http')) {
+                  coverUrl = '/' + coverUrl;
+                }
+              %>
+              <div class="mb-4 rounded-4 overflow-hidden shadow-lg border border-secondary border-opacity-25" style="max-height: 480px;">
+                <img src="<%= coverUrl %>" class="w-100 h-100 object-fit-cover" alt="<%= blog.title %>" onerror="this.style.display='none'">
+              </div>
+            <% } %>
+
+            <!-- Article Content -->
+            <div class="article-content text-light fs-5 mt-4" style="line-height: 1.8; color: #cbd5e1 !important; white-space: pre-wrap; font-family: 'Plus Jakarta Sans', sans-serif;"><%= blog.body %></div>
+          </article>
+
+          <!-- Comments Section -->
+          <section class="p-4 p-md-5" style="background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-color); border-radius: 24px;">
+            <h3 class="font-outfit fw-bold text-white mb-4 d-flex align-items-center gap-2">
+              <i class="bi bi-chat-left-text-fill text-purple" style="color: #c084fc;"></i>
+              Discussion (<%= comments ? comments.length : 0 %>)
+            </h3>
+
+            <!-- Add Comment Form -->
+            <% if (locals.user) { %>
+              <form action="/blog/comment/<%= blog._id %>" method="POST" class="mb-5">
+                <div class="mb-3">
+                  <textarea name="content" class="form-control form-control-custom" rows="3" placeholder="Share your thoughts or feedback on this story..." required></textarea>
+                </div>  
+                <button class="btn btn-primary-gradient px-4 py-2" type="submit">
+                  <i class="bi bi-chat-square-quote me-1"></i> Post Comment
+                </button>
+              </form>
+            <% } else { %>
+              <div class="alert alert-dark border-secondary border-opacity-25 text-muted mb-4 d-flex align-items-center gap-2" style="border-radius: 14px; background: rgba(15, 23, 42, 0.6);">
+                <i class="bi bi-lock-fill text-purple"></i>
+                <span>Want to join the discussion? <a href="/user/signin" class="text-purple font-semibold" style="color: #c084fc;">Sign in</a> to leave a comment.</span>
+              </div>
+            <% } %>
+
+            <!-- Comments List -->
+            <div class="d-flex flex-column gap-3">
+              <% if (comments && comments.length > 0) { %>
+                <% comments.forEach(comment => { %>
+                  <div class="p-3 rounded-4" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.06);">
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                      <div class="author-avatar-placeholder" style="width: 34px; height: 34px; font-size: 0.85rem;">
+                        <%= (comment.createdBy && comment.createdBy.fullName) ? comment.createdBy.fullName.charAt(0).toUpperCase() : 'U' %>
+                      </div>
+                      <div>
+                        <div class="fw-bold text-white fs-6">
+                          <%= (comment.createdBy && comment.createdBy.fullName) ? comment.createdBy.fullName : 'Anonymous Reader' %>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-light ps-5 fs-6" style="color: #94a3b8 !important; white-space: pre-wrap;"><%= comment.content %></div>
+                  </div>
+                <% }) %>
+              <% } else { %>
+                <div class="text-center py-4 text-muted">
+                  <i class="bi bi-chat-dots fs-3 d-block mb-2 text-dim"></i>
+                  No comments yet. Be the first to start the conversation!
+                </div>
+              <% } %>
+            </div>
+
+          </section>
+
         </div>
-    </div >
+      </div>
+    </main>
+
     <%- include('./partials/scripts') %>
-</blog>   
+</body>
 </html>

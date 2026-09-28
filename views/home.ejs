@@ -2,45 +2,148 @@
 <html lang="en">
 <head>
     <%- include('./partials/head') %>
-    <title>Homepage</title>
+    <title>Blogify — Ideas, Stories & Perspectives</title>
 </head>
 <body>
     <%- include('./partials/nav') %>
 
-     <div class="card mb-3 mt-4" style="max-width: 100%; height: 400px">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="c:\Users\DELL\AppData\Local\Temp\istockphoto-1053936212-612x612.webp" class="img-fluid rounded-start" alt="...">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-        <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
+    <div class="container">
+      <!-- Hero Banner -->
+      <section class="hero-banner">
+        <div class="row align-items-center">
+          <div class="col-lg-7">
+            <div class="hero-content">
+              <div class="hero-tag">
+                <i class="bi bi-stars"></i> Discover Fresh Perspectives
+              </div>
+              <h1 class="hero-title">
+                Explore Ideas, Stories & <span class="hero-title-accent">Creative Insights</span>
+              </h1>
+              <p class="hero-subtitle">
+                Welcome to Blogify — a platform for creators, developers, and thinkers to share knowledge, inspire others, and build meaningful connections.
+              </p>
+              <div class="d-flex flex-wrap gap-3 align-items-center">
+                <% if (locals.user) { %>
+                  <a href="/blog/add-new" class="btn btn-primary-gradient">
+                    <i class="bi bi-pencil-square"></i> Create New Post
+                  </a>
+                <% } else { %>
+                  <a href="/user/signup" class="btn btn-primary-gradient">
+                    <i class="bi bi-rocket-takeoff"></i> Get Started Free
+                  </a>
+                  <a href="/user/signin" class="btn btn-outline-custom">
+                    <i class="bi bi-box-arrow-in-right"></i> Sign In
+                  </a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5 d-none d-lg-block">
+            <div class="hero-img-container">
+              <img src="/images/hero-banner.jpg" alt="Blogify Hero Banner" onerror="this.src='https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=800&q=80'">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Category Filter Pills -->
+      <div class="category-pills">
+        <div class="category-pill active"><i class="bi bi-grid-fill me-1"></i> All Posts</div>
+        <div class="category-pill"><i class="bi bi-laptop me-1"></i> Tech & Code</div>
+        <div class="category-pill"><i class="bi bi-palette me-1"></i> Design</div>
+        <div class="category-pill"><i class="bi bi-lightbulb me-1"></i> Productivity</div>
+        <div class="category-pill"><i class="bi bi-compass me-1"></i> Lifestyle</div>
       </div>
-    </div>
-  </div>
-</div>
 
+      <!-- Section Title -->
+      <div class="section-title">
+        <div class="d-flex align-items-center gap-2">
+          <span>Latest Articles</span>
+          <span class="badge rounded-pill bg-purple px-3 py-2" style="background: rgba(168, 85, 247, 0.15); color: #c084fc; font-weight: 600; font-size: 0.85rem;">
+            <%= blogs ? blogs.length : 0 %> <%= blogs && blogs.length === 1 ? 'Article' : 'Articles' %>
+          </span>
+        </div>
+      </div>
 
-    <!-- <%= JSON.stringify(blogs) %> -->
-    <div class="container mt-3">
-     <div class="row row-cols-4">   
-      <% blogs.forEach(blog => { %>
-        <div class="col">
-       <div class="card col" style="width: 18rem;">
-       <img src="<%= blog.coverImageURL %>" class="card-img-top">
-       <div class="card-body">
-       <h5 class="card-title"><%= blog.title %></h5>
-        
-       <a href="/blog/<%= blog._id %>" class="btn btn-primary">View</a>
-       </div>
-  </div>
-</div>
-      <% }) %>
+      <!-- Articles Grid -->
+      <% if (blogs && blogs.length > 0) { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">   
+          <% blogs.forEach(blog => { %>
+            <div class="col">
+              <article class="blog-card">
+                <div class="blog-card-img-wrap">
+                  <% 
+                    let imgUrl = blog.coverImageURL || 'https://images.unsplash.com/photo-1432821596592-e2c18b78144f?auto=format&fit=crop&w=800&q=80';
+                    if (!imgUrl.startsWith('/') && !imgUrl.startsWith('http')) {
+                      imgUrl = '/' + imgUrl;
+                    }
+                  %>
+                  <img src="<%= imgUrl %>" class="blog-card-img" alt="<%= blog.title %>" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1432821596592-e2c18b78144f?auto=format&fit=crop&w=800&q=80'">
+                  <span class="blog-badge"><i class="bi bi-bookmark-fill me-1"></i> Article</span>
+                </div>
+                
+                <div class="blog-card-body">
+                  <h2 class="blog-card-title"><%= blog.title %></h2>
+                  
+                  <% if (blog.body) { %>
+                    <p class="blog-card-excerpt">
+                      <%= blog.body.substring(0, 120) %><% if (blog.body.length > 120) { %>...<% } %>
+                    </p>
+                  <% } else { %>
+                    <p class="blog-card-excerpt">Explore this full article on Blogify...</p>
+                  <% } %>
+
+                  <div class="blog-card-footer">
+                    <div class="author-meta">
+                      <div class="author-avatar-placeholder">
+                        <%= (blog.createdBy && blog.createdBy.fullName) ? blog.createdBy.fullName.charAt(0).toUpperCase() : 'B' %>
+                      </div>
+                      <span class="author-name">
+                        <%= (blog.createdBy && blog.createdBy.fullName) ? blog.createdBy.fullName : 'Blogify Author' %>
+                      </span>
+                    </div>
+                    
+                    <a href="/blog/<%= blog._id %>" class="btn-read-more">
+                      Read Story <i class="bi bi-arrow-right"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          <% }) %>
+        </div>
+      <% } else { %>
+        <!-- Empty State -->
+        <div class="empty-state-card mb-5">
+          <div class="empty-state-icon">
+            <i class="bi bi-journal-plus"></i>
+          </div>
+          <h3 class="font-outfit fw-bold text-white mb-2">No Articles Found Yet</h3>
+          <p class="text-muted mb-4">Be the pioneer! Publish the very first story on Blogify today.</p>
+          <% if (locals.user) { %>
+            <a href="/blog/add-new" class="btn btn-primary-gradient">
+              <i class="bi bi-pencil-square me-1"></i> Write First Article
+            </a>
+          <% } else { %>
+            <a href="/user/signup" class="btn btn-primary-gradient">
+              <i class="bi bi-person-plus me-1"></i> Join to Write
+            </a>
+          <% } %>
+        </div>
+      <% } %>
     </div>
-</div>
-   <%- include('./partials/scripts') %>
-    
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+      <div class="container text-center">
+        <div class="navbar-brand-gradient d-inline-flex justify-content-center mb-2 fs-4">
+          <i class="bi bi-journal-richtext"></i> Blogify
+        </div>
+        <p class="text-muted mb-3" style="font-size: 0.9rem;">Empowering creative minds to share stories with the world.</p>
+        <p class="mb-0 text-dim" style="font-size: 0.85rem;">&copy; <%= new Date().getFullYear() %> Blogify. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <%- include('./partials/scripts') %>
 </body>
 </html>

@@ -2,31 +2,49 @@
 <html lang="en">
 <head>
     <%- include('./partials/head') %>
-    <title>Signin</title>
+    <title>Sign In — Blogify</title>
 </head>
 <body>
     <%- include('./partials/nav') %>
 
-    <div class="container mt-4">
-    <form action="/user/signin" method="post">
+    <div class="container">
+      <div class="auth-container">
+        <div class="text-center mb-4">
+          <div class="navbar-brand-gradient d-inline-flex justify-content-center fs-2 mb-2">
+            <i class="bi bi-shield-lock-fill"></i>
+          </div>
+          <h2 class="font-outfit fw-bold text-white mb-1">Welcome Back</h2>
+          <p class="text-muted fs-6">Enter your details to access your Blogify account</p>
+        </div>
 
-   
+        <form action="/user/signin" method="post">
+          <div class="mb-3">
+            <label for="email" class="form-label-custom">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-muted" style="border-radius: 12px 0 0 12px; border-color: rgba(255,255,255,0.1) !important;"><i class="bi bi-envelope"></i></span>
+              <input type="email" name="email" class="form-control form-control-custom" style="border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important;" id="email" placeholder="name@example.com" required>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <label for="password" class="form-label-custom">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-muted" style="border-radius: 12px 0 0 12px; border-color: rgba(255,255,255,0.1) !important;"><i class="bi bi-key"></i></span>
+              <input type="password" name="password" class="form-control form-control-custom" style="border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important;" id="password" placeholder="••••••••" required>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary-gradient w-100 py-3 mb-3 justify-content-center">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Account
+          </button>
+        </form>
 
-  <div class="mb-3">
-    <label for="exampleInputEmail1" class="form-label">Email address</label>
-    <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-  </div>
-  <div class="mb-3">
-    <label for="exampleInputPassword1" class="form-label">Password</label>
-    <input type="password" name="password" class="form-control" id="exampleInputPassword1">
-  </div>
-  
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+        <p class="text-center text-muted mb-0 mt-3 fs-6">
+          Don't have an account? <a href="/user/signup" class="text-purple text-decoration-none fw-semibold" style="color: #c084fc;">Create one here</a>
+        </p>
+      </div>
     </div>
     
-   <%- include('./partials/scripts') %>
-    
+    <%- include('./partials/scripts') %>
 </body>
 </html>
